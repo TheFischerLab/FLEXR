@@ -23,7 +23,7 @@ pip install numpy
 ```
 git clone https://github.com/TheFischerLab/ringer-refine.git
 ```
-3. Install Coot (v1.0.) (Emsley & Cowtan, 2004) via Hombrew using a formula developed by Yoshitaka Moriwaki:
+3. Install [Coot](https://pemsley.github.io/coot/blog/2022/06/05/coot-1-on-macos.html) (v1.0.5) (Emsley & Cowtan, 2004) via Hombrew using a formula developed by Yoshitaka Moriwaki:
 ```
 wget https://raw.githubusercontent.com/YoshitakaMo/homebrew-bio/coot/Formula/coot.rb -O coot.rb
 brew install ./coot.rb
