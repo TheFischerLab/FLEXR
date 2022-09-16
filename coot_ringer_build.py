@@ -153,9 +153,6 @@ if variables['build'] is True:
     print('Building finished....')
 else:
     print('Building option set to false.')
-    print('Exiting coot...')
-
-print('Building finished.')
 
 if variables['exit'] is True:
     coot.coot_no_state_real_exit(0)

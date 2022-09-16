@@ -25,10 +25,12 @@ git clone https://github.com/TheFischerLab/ringer-refine.git
 ```
 3. Install [Coot](https://pemsley.github.io/coot/blog/2022/06/05/coot-1-on-macos.html) (v1.0.5) (Emsley & Cowtan, 2004) via Hombrew using a formula developed by Yoshitaka Moriwaki:
 ```
-wget https://raw.githubusercontent.com/YoshitakaMo/homebrew-bio/coot/Formula/coot.rb -O coot.rb
-brew install ./coot.rb
+brew install ./coot.rb --verbose --debug --keep-tmp
 ```
-4. Install Pandas to Coot packaged python:
+Helpful information for troubleshooting the Coot 1.0 installation can be found [here](https://github.com/pemsley/coot/issues/33).
+
+4. Install Pandas to Coot packaged python.
+Please note that the path on your computer might be slightly different:
 ```
 /opt/homebrew/bin/python3.10 -m pip install pandas
 ```
@@ -70,7 +72,8 @@ Plots showing the electron density and detected peaks and be produced by setting
 ### 2. Model building
 
 The second script is `coot_ringer_build.py`, which takes the rotamers identified in the previous step
-and builds them into a single conformer model using model building tools in Coot with:
+and builds them into a single conformer model using model building tools in Coot.
+Please note that the path to Coot 1.0 might vary on your computer. This step is run with:
 ```
 /opt/homebrew/Cellar/coot/1.0.05/bin/coot --script coot_ringer_build.py file.somepdb
 ```
