@@ -9,6 +9,7 @@ If you use this software, please cite:
 
 ## Installation
 
+`Ringer_refine` was tested on Intel and M1 Macs running macOS Monterey.
 You will need the following tools:
 1. git
 2. [Phenix](https://phenix-online.org)
@@ -23,7 +24,7 @@ pip install numpy
 ```
 git clone https://github.com/TheFischerLab/ringer-refine.git
 ```
-3. Install [Coot](https://pemsley.github.io/coot/blog/2022/06/05/coot-1-on-macos.html) (v1.0.5) (Emsley & Cowtan, 2004) via Hombrew using a formula developed by Yoshitaka Moriwaki:
+3. Install [Coot](https://pemsley.github.io/coot/blog/2022/06/05/coot-1-on-macos.html) (v1.0.5) (Emsley & Cowtan, 2004) via Hombrew using a formula developed by [Yoshitaka Moriwaki](https://github.com/YoshitakaMo):
 ```
 brew install ./coot.rb --verbose --debug --keep-tmp
 ```
@@ -78,7 +79,8 @@ Please note that the path to Coot 1.0 might vary on your computer. This step is 
 /opt/homebrew/Cellar/coot/1.0.05/bin/coot --script coot_ringer_build.py file.somepdb
 ```
 
-where `somepdb` is name that matches both the input single conformer model file (.pdb) you want to build on and the prefix of the `_ringer_alts.csv` file containing the list of conformers that will be built.
+where `somepdb` is the name that matches both the input single conformer model file (.pdb) you want to build on and the prefix of the `_ringer_alts.csv` file containing the list of conformers that will be built.
+For example, if your model name and `_ringer_alts.csv` prefix are 1ABC, use `file.1ABC`.
 
 Another important setting is whether to add alternative conformations starting at the Cα atom or create an entirely new residue. The default is to create an entirely new residue, but this can be changed using:
 

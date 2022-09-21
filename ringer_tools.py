@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 #    Tools for analyzing Ringer measurements.
-#    Part of the Flipper program.
 #    Authors: Tim Stachowski & Marcus Fischer
 #    Email: tim.stachowski@stjude.org
 #    Copyright 2022 St. Jude Children's Research Hospital, Memphis, TN.
