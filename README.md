@@ -59,12 +59,12 @@ Ringer based electron density measurements. First, it performs peak detection, s
 it assembles these peaks into possible rotamers, and third it tests these rotamers
 against the ideal rotamer library (`rotamer_library_coot.csv`). It is run with:
 ```
-python FLEXR.py -f somepdb_ringer.csv
+python flexr.py -f somepdb_ringer.csv
 ```
 Two options users will want to test are the electron density threshold `-t` for peak detection and
 the geometry tolerance `-g` used for matching the ideal rotamer library:
 ```
-python FLEXR.py -f somepdb_ringer.csv -t 0.35 -g 40
+python flexr.py -f somepdb_ringer.csv -t 0.35 -g 40
 ```
 Rotamers slated for building are saved to `somepdb_ringer_alts.csv`.
 
