@@ -37,7 +37,7 @@ class Coot < Formula
   depends_on "numpy"
   depends_on "py3cairo"
   depends_on "pygobject3"
-  depends_on "python@3.9"
+  depends_on "python@3.10"
   depends_on "rdkit"
   depends_on "sqlite"
 
@@ -62,11 +62,15 @@ class Coot < Formula
     if build.head?
       # libtool -> glibtool for macOS
       inreplace "autogen.sh", "libtool", "glibtool"
-      # patch to use -std=c++14 for '--with-enhanced-ligand-tools'
-      inreplace "configure.ac", "CXXFLAGS -std=c++11", "CXXFLAGS -std=c++14"
+      # patch to use -std=c++17 for '--with-enhanced-ligand-tools'
+      inreplace "configure.ac", "CXXFLAGS -std=c++11", "CXXFLAGS -std=c++17"
+      # patch to use goocanvas-3.0
+      inreplace "configure.ac", "goocanvas-2.0", "goocanvas-3.0"
+      inreplace "macros/goo-canvas.m4", "goocanvas-2.0", "goocanvas-3.0"
       system "./autogen.sh"
     else
-      inreplace "configure", "CXXFLAGS -std=c++11", "CXXFLAGS -std=c++14"
+      inreplace "configure", "goocanvas-2.0", "goocanvas-3.0"
+      inreplace "configure", "CXXFLAGS -std=c++11", "CXXFLAGS -std=c++17"
     end
 
     if OS.mac?
@@ -149,3 +153,5 @@ index 3b5ef61a0..3db17ea38 100755
  export COOT_SCHEME_DIR
  export COOT_REF_STRUCTS
  export COOT_RESOURCES_FILE
+ export GDK_GL=always
+ export GDK_RENDERING=image
