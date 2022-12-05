@@ -45,7 +45,7 @@ S = ARGS.step
 ## Intro messages
 print(' ')
 print('Welcome to FLEXR!')
-print('A program for automated multi-conformer model building using unbiased electron density map sampling.")
+print('A program for automated multi-conformer model building using unbiased electron density map sampling.')
 time.sleep(1)
 print(' ')
 print('Brought to you by the Fischer Lab at St. Jude Children\'s Research Hospital')
