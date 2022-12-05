@@ -147,7 +147,9 @@ def ringer_parser(file,step):
     ## extract chain
     chain = []
     for j in dataframe['res']:
-        chain_n = ''.join(i for i in j if not i.isdigit())
+        if j.strip()[-1].isdigit() is False:
+            j = j[:-1]
+        chain_n = ''.join(i for i in j.strip() if not i.isdigit())
         chain_n = chain_n[-1]
         chain.append(chain_n)
     dataframe['chain'] = chain
