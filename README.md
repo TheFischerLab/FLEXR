@@ -54,17 +54,17 @@ density measurements that `FLEXR` relies on.
 ### 1. Conformer detection
 
 `FLEXR` contains two scripts, one for (1) conformer detection and one for (2) model building.
-The first script is `flexr.py` which performs three main functions from
+The first script is `flexr_find.py` which performs three main functions from
 Ringer based electron density measurements. First, it performs peak detection, second
 it assembles these peaks into possible rotamers, and third it tests these rotamers
 against the ideal rotamer library (`rotamer_library_coot.csv`). It is run with:
 ```
-python flexr.py -f somepdb_ringer.csv
+python flexr_find.py -f somepdb_ringer.csv
 ```
 Two options users will want to test are the electron density threshold `-t` for peak detection and
 the geometry tolerance `-g` used for matching the ideal rotamer library:
 ```
-python flexr.py -f somepdb_ringer.csv -t 0.35 -g 40
+python flexr_find.py -f somepdb_ringer.csv -t 0.35 -g 40
 ```
 Rotamers slated for building are saved to `somepdb_ringer_alts.csv`.
 
@@ -72,11 +72,11 @@ Plots showing the electron density and detected peaks and be produced by setting
 
 ### 2. Model building
 
-The second script is `coot_ringer_build.py`, which takes the rotamers identified in the previous step
+The second script is `flexr_build.py`, which takes the rotamers identified in the previous step
 and builds them into a single conformer model using model building tools in Coot.
 Please note that the path to Coot 1.0 might vary on your computer. This step is run with:
 ```
-/opt/homebrew/Cellar/coot/1.0.05/bin/coot --script coot_ringer_build.py file.somepdb
+/opt/homebrew/Cellar/coot/1.0.05/bin/coot --script flexr_build.py file.somepdb
 ```
 
 where `somepdb` is the name that matches both the input single conformer model file (.pdb) you want to build on and the prefix of the `_ringer_alts.csv` file containing the list of conformers that will be built.
@@ -85,7 +85,7 @@ For example, if your model name and `_ringer_alts.csv` prefix are 1ABC, use `fil
 Another important setting is whether to add alternative conformations starting at the Cα atom or create an entirely new residue. The default is to create an entirely new residue, but this can be changed using:
 
 ```
-/opt/homebrew/Cellar/coot/1.0.05/bin/coot --script coot_ringer_build.py file.somepdb ca_or_all.0
+/opt/homebrew/Cellar/coot/1.0.05/bin/coot --script flexr_build.py file.somepdb ca_or_all.0
 ```
 
 ### 3. Refinement
