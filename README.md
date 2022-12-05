@@ -54,7 +54,7 @@ density measurements that `FLEXR` relies on.
 ### 1. Conformer detection
 
 `FLEXR` contains two scripts, one for (1) conformer detection and one for (2) model building.
-The first script is `FLEXR.py` which performs three main functions from
+The first script is `flexr.py` which performs three main functions from
 Ringer based electron density measurements. First, it performs peak detection, second
 it assembles these peaks into possible rotamers, and third it tests these rotamers
 against the ideal rotamer library (`rotamer_library_coot.csv`). It is run with:
