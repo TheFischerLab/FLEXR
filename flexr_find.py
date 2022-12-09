@@ -49,6 +49,7 @@ print('A program for automated multi-conformer model building using unbiased ele
 time.sleep(1)
 print(' ')
 print('Brought to you by the Fischer Lab at St. Jude Children\'s Research Hospital')
+print('Copyright reserved')
 print('Please cite: ')
 print(' ')
 time.sleep(1)

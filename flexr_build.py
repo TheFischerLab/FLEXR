@@ -46,20 +46,20 @@ for i in variables:
 # Print options if user asks for help or missing input file
 if variables['help'] is True:
     print('')
-    print('Welcome to Ringer-refine... the Coot part')
+    print('Welcome to FLEXR... the Coot part')
     print('Need help?')
     print('See our GitHub page or paper for full options documentation')
-    print('https://github.com/TheFischerLab/Ringer-refine')
+    print('https://github.com/TheFischerLab/FLEXR')
     print('')
     print(json.dumps(variables,sort_keys=True,indent=4))
-    print('Exiting coot...')
+    print('Exiting Coot...')
     print('')
     coot.coot_no_state_real_exit(0)
 
 # If no input file defined: exit
 if variables['file'] is None:
     print('Input file not defined...')
-    print('Exiting coot...')
+    print('Exiting Coot...')
     coot.coot_no_state_real_exit(0)
 
 # Possible amino acid residue atoms
@@ -156,4 +156,4 @@ else:
 
 if variables['exit'] is True:
     coot.coot_no_state_real_exit(0)
-    print('Exiting coot...')
+    print('Exiting Coot...')
