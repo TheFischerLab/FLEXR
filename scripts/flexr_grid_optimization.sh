@@ -38,7 +38,7 @@ cp $i".mtz" ${i}"_"${j}"_"${k}".mtz"
 mv ${i}"_ringer_alts.csv" ${i}"_"${j}"_"${k}"_ringer_alts.csv"
 
 # run flexr-build
-/opt/homebrew/Cellar/coot/1.0.05/bin/coot --script flexr_build.py file-${i}"_"${j}"_"${k} load_maps-True score-True
+/opt/homebrew/Cellar/coot/1.0.05/bin/coot --script flexr_build.py file-${i}"_"${j}"_"${k} #load_maps-True score-True
 rm ${i}"_"${j}"_"${k}".pdb"
 
 
