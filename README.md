@@ -95,5 +95,5 @@ Output multi-conformer models are named `somepdb_newconfs.pdb` and can be refine
 The Phenix PDB editing tool, `phenix.pdbtools`, can be used to filter out rotamers with certain occupancies.
 For example, to remove rotamers with occupancy=0 use:
 ```
-phenix.pdbtools some_pdb.pdb remove="occupancy=0”
+phenix.pdbtools somepdb_newconfs_refined.pdb remove="occupancy=0”
 ```
