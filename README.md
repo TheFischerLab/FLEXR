@@ -66,6 +66,7 @@ the geometry tolerance `-g` used for matching the ideal rotamer library:
 ```
 python flexr_find.py -f somepdb_ringer.csv -t 0.35 -g 40
 ```
+Parameter optimization can be performed using the `flexr_grid_optimization.sh` script in the `script` folder.
 Rotamers slated for building are saved to `somepdb_ringer_alts.csv`.
 
 Plots showing the electron density and detected peaks and be produced by setting the `-p` flag to True.
@@ -91,3 +92,8 @@ Another important setting is whether to add alternative conformations starting a
 ### 3. Refinement
 
 Output multi-conformer models are named `somepdb_newconfs.pdb` and can be refined using the program of the user’s choice.
+The Phenix PDB editing tool, `phenix.pdbtools`, can be used to filter out rotamers with certain occupancies.
+For example, to remove rotamers with occupancy=0 use:
+```
+phenix.pdbtools some_pdb.pdb remove="occupancy=0”
+```
