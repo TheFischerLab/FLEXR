@@ -1,5 +1,5 @@
 # FLEXR
-Multi-conformer modeling of crystallographic protein structures from electron density
+![alt text](https://github.com/TheFischerLab/FLEXR/tree/main/img/logo.png)
 
 `FLEXR` is a command line tool for building in alternative side chain conformations
 determined from [Ringer](https://bl831.als.lbl.gov/ringer/ringer/Documentation/ringerManual.htm).
