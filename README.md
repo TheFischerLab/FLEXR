@@ -9,7 +9,7 @@ If you use this software, please cite:
 
 ## Installation
 
-`FLEXR` was tested on Intel and M1 Macs running macOS Monterey.
+`FLEXR` was tested on Intel and M1 Macs running macOS Monterey and Ventura.
 You will need the following tools:
 1. git
 2. [Phenix](https://phenix-online.org)
