@@ -1,5 +1,5 @@
 # FLEXR
-![alt text](https://github.com/TheFischerLab/FLEXR/tree/main/img/logo.jpg?raw=true)
+[alt text](https://github.com/TheFischerLab/FLEXR/tree/main/img/logo.jpg?raw=true)
 
 `FLEXR` is a command line tool for building in alternative side chain conformations
 determined from [Ringer](https://bl831.als.lbl.gov/ringer/ringer/Documentation/ringerManual.htm).
