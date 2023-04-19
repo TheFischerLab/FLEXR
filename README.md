@@ -1,8 +1,8 @@
 # FLEXR
 ![logo](img/logo.png)
 
-`FLEXR` is a command line tool for building in alternative side chain conformations
-determined from [Ringer](https://bl831.als.lbl.gov/ringer/ringer/Documentation/ringerManual.htm).
+`FLEXR` is a command line tool for detecting and building in alternative side chain conformations
+determined into protein crystal structures.
 
 If you use this software, please cite:
 Stachowski, T. R. & Fischer, M.
@@ -40,7 +40,7 @@ Please note that the path on your computer might be slightly different:
 
 ## Usage examples
 
-`FLEXR` relies on electron density measurements calculated by Ringer.
+`FLEXR` relies on electron density measurements calculated by [Ringer](https://bl831.als.lbl.gov/ringer/ringer/Documentation/ringerManual.htm).
 Ringer is packaged in the MMTBX module of the CCTBX library.
 Maps suitable for Ringer can be produced with:
 ```
