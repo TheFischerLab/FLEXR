@@ -1,8 +1,8 @@
 # FLEXR
 ![logo](img/logo.png)
 
-`FLEXR` is a command line tool for detecting and building in alternative side chain conformations
-determined into protein crystal structures.
+`FLEXR` is a command line tool for automatically detecting and building alternative side chain conformations
+ into protein crystal structures.
 
 If you use this software, please cite:
 Stachowski, T. R. & Fischer, M.
