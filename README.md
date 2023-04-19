@@ -8,7 +8,7 @@ If you use this software, please cite:
 
 Stachowski, T. R. & Fischer, M.
 [FLEXR: automated multi-conformer model building using electron-density map sampling](https://doi.org/10.1107/S2059798323002498)
-2023 Acta Cryst. D79.
+.2023 Acta Cryst. D79.
 
 ## Installation
 
