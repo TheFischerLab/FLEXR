@@ -5,7 +5,9 @@
 determined from [Ringer](https://bl831.als.lbl.gov/ringer/ringer/Documentation/ringerManual.htm).
 
 If you use this software, please cite:
-[Placeholder]()
+Stachowski, T. R. & Fischer, M.
+[FLEXR: automated multi-conformer model building using electron-density map sampling](https://doi.org/10.1107/S2059798323002498)
+2023 Acta Cryst. D79.
 
 ## Installation
 
