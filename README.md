@@ -100,6 +100,20 @@ flexr -m MSA
 ```
 and it will find all `_ringer.csv` files in the working directory.
 
+2. Outputs
+```
+ringer_alignment.fasta          1. Sequences from Ringer CSV files in FASTA
+ringer_alignment_muscle.fasta   2. Sequence alignment from MUSCLE
+alignment_new_index.csv         3. Sequence alignment with new residue numbering
+final_ringer_dataframe.csv      4. All input Ringer CSV files with numbering based on alignement
+somepdb_modified_chi1_out.pdb   5. Pdb with Pearson CC values in B-factor columns (if -pearson True -render True options are used)
+chi1                            6. Directory with images of sequence aligned Ringer profiles
+tmp                             7. Directory with Ringer CSVs separated by chain
+```
+
+3. Example sequence aligned Ringer profile
+![msa](img/msa.png)
+
 2. Some relevant options for `flexr -msa`:
 ```
   -safety SAFETY - compare only matched residues that are either branched or unbranched in DELTA. Default: True
