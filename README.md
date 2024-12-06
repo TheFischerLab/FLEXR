@@ -35,7 +35,7 @@ git clone https://github.com/TheFischerLab/FLEXR.git
 ```
 3. Force install required python packages to Coot 1's python
 ```
-sudo /Applications/ccp4-9/coot_py3/Frameworks/Python.framework/Versions/3.9/bin/python3.9 -m pip install pandas numpy scipy matplotlib matplotlib-venn
+sudo /Applications/ccp4-9/coot_py3/Frameworks/Python.framework/Versions/3.9/bin/python3.9 -m pip install pandas numpy scipy matplotlib matplotlib-venn biopython
 ```
 4. Copy the the contents of `FLEXR` to where Coot 1 can see it:
 ```
