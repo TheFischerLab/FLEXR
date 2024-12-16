@@ -270,7 +270,7 @@ def muscle_alignment(reload):
     print(' ')
     time.sleep(1)
     subprocess.check_output(['muscle','-in','ringer_alignment.fasta','-out',
-                             'ringer_alignment_muscle.fasta','-quiet'])
+                             'ringer_alignment_muscle.fasta','-quiet'],shell=True)
 
     print('Saving alignment to ringer_alignment.fasta ...')
     time.sleep(1)
