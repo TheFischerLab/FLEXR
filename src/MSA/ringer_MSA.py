@@ -269,9 +269,10 @@ def muscle_alignment(reload):
     print('Aligning sequences...')
     print(' ')
     time.sleep(1)
-    subprocess.check_output(['muscle','-in','ringer_alignment.fasta','-out',
-                             'ringer_alignment_muscle.fasta','-quiet'],shell=True)
+    subprocess.check_output(['muscle','-align','ringer_alignment.fasta','-output',
+                             'ringer_alignment_muscle.fasta'],text=True)
 
+    print('')
     print('Saving alignment to ringer_alignment.fasta ...')
     time.sleep(1)
 
