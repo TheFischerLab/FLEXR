@@ -117,7 +117,7 @@ def parse_ringers(ringer_outputs,chiopt,step):
     for ringer in ringer_outputs:
 
         #read in file
-        df = pd.read_csv(ringer,names=None)
+        df = pd.read_csv(ringer,header=None)
 
         try:
             df.columns = columns
@@ -298,7 +298,8 @@ def muscle_alignment(reload):
     print(' ')
     time.sleep(1)
     matchings = pd.DataFrame(matchings,columns=['res']+ids)
-    matchings = matchings.reindex(sorted(matchings.columns), axis=1)
+    sort_columns = sorted(ids)+['res']
+    matchings = matchings[sort_columns]
 
     if reload == False:
         matchings.to_csv('alignment_new_index.csv',header=True,index=False)
@@ -313,19 +314,23 @@ def reindexing(matchings,ringer_outputs,ringers):
         new_index = matchings.iloc[:,i].replace('-',np.nan)
         new_index = new_index.dropna()
         old_index = ringers[i]['res'].drop_duplicates()
+        #print(ringer_outputs[i],len(new_index),len(old_index))
         if len(new_index) == len(old_index):
             reindex = np.column_stack((old_index,new_index.index.values))
             reindex = pd.DataFrame(reindex,columns=['res','new_resseq'])
             reindex['new_resseq'] = reindex['new_resseq'].astype(int)
             ringers[i] = pd.merge(ringers[i],reindex,how='left',on='res')
         else:
-            print(ringer_outputs[i],i,'not equal length lists')
+            print('Error: '+ringer_outputs[i],i,'not equal length lists')
+            print('Exiting...')
+            print('Done.')
             sys.exit()
     return ringers
 
 def safety(safeopt,chiopt,amino_acids):
     ## which residues have certain unbranched torsion angles
     if safeopt == 'True':
+        print('')
         print('Safety on. see -h to read more')
         print(' ')
         if chiopt == 'chi1':
@@ -337,6 +342,7 @@ def safety(safeopt,chiopt,amino_acids):
         if chiopt == 'chi4':
             chi_allow = "Lys Arg".upper().split()
     else:
+        print('')
         print('Safety off - be careful')
         print(' ')
         chi_allow = amino_acids[:,[2]].flatten()
