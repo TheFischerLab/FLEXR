@@ -21,7 +21,7 @@ To run the full suite, you will need the following tools:
 1. git
 2. [Phenix](https://phenix-online.org), for [Ringer](https://bl831.als.lbl.gov/ringer/)
 3. [Coot 1](https://pemsley.github.io/coot/) for FLEXR/FLEXR-GUI, which is most easily installed through [CCP4 9](https://www.ccp4.ac.uk/download/#os=macos)
-4. [MUSCLE](https://www.drive5.com/muscle/) For FLEXR-MSA, which is most easily accessed with Phenix
+4. [MUSCLE](https://www.drive5.com/muscle/) For FLEXR-MSA, which can also be downloaded through Homebrew. Test with MUSCLE 5.2 .
 5. [PyMOL](https://pymol.org) For FLEXR-MSA, optional.
 
 These installation instructions will show you how to install FLEXR within Coot 1 from a CCP49 installation.
@@ -39,7 +39,7 @@ sudo /Applications/ccp4-9/coot_py3/Frameworks/Python.framework/Versions/3.9/bin/
 ```
 4. Copy the the contents of `FLEXR` to where Coot 1 can see it:
 ```
-cp ./FLEXR/* /Applications/ccp4-9/coot_py3/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/coot
+cp -r ./FLEXR/* /Applications/ccp4-9/coot_py3/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/coot
 ```
 5. Coot 1 with the FLEXR-GUI loaded can be launched with:
 ```
