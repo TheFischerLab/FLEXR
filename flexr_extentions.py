@@ -738,8 +738,7 @@ def add_multiconfvalidation_gui():
         # Step 3: Assign colors to selections (MMDB format) - https://github.com/pemsley/coot/blob/main/mmdb-selection-doc
         color_assignments = []
 
-
-        for null,chain,resnum,inscode in alts[:]:
+        for chain,resnum,inscode in alts[:]:
             atom_info = coot.residue_info_py(imol,chain,resnum,'')
             alts = []
             atoms = []
