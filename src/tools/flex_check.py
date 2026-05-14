@@ -177,13 +177,20 @@ def wrong_occupancy_alt(df):
     # if A isn't highest occupancy residue
     highest = df[df['atom_het']=='ATOM']
     highest = highest[~(highest['atom_type'].str.contains('H'))]
-
     highest = highest.groupby(by=['chain','res_num','alt_loc']).occupancy.mean().reset_index()
     highest = highest[highest['alt_loc']!= ' ']
     maxocc = highest.groupby(by=['chain','res_num']).occupancy.max().reset_index()
     highest = pd.merge(maxocc,highest,on=['chain','res_num','occupancy'],how='left')
+
+    #remove ones where the highest alt has equal occupancy to another
+    counts = highest[['chain','res_num']].value_counts().reset_index()
+    highest = pd.merge(highest,counts,on=['chain','res_num'],how='left')
+    highest = highest[highest['count']==1]
+
     highest = highest[highest['alt_loc']!='A']
-    highest = highest[highest['occupancy']>0.5]
+    highest = highest[['chain','res_num','alt_loc','occupancy']]
+
+    #highest = highest[highest['occupancy']>0.5]
     print('6. Highest occupancy rotamer not labeled A? (e.g. Occ_A < Occ_B): ')
     if len(highest)>0:
         print(highest.to_string(index=False))
@@ -242,7 +249,11 @@ def main():
 
     # only interested in side-chains
     backboneatoms = ['N', 'CA', 'C', 'O']
-    df = df[~(df['atom_type'].isin(backboneatoms))]
+    #for paper:
+    #df = df[~(df['atom_type'].isin(backboneatoms))]
+    #
+    df = df[~(df['atom_type'].isin(backboneatoms))|(df['res_type']=='GLY')|(df['res_type']=='ALA')]
+
 
     #print(df)
 
@@ -259,7 +270,7 @@ def main():
 
         ## export ##
         # only output residues with errors
-        df = df[df.eq('X').any(axis=1)]
+        df = df[df[tests].eq('X').any(axis=1)]
         # optional
         df = df.drop(['atom_het','atom_type','x','y','z','b_factor'],axis=1)
         df = df.drop_duplicates()
@@ -272,6 +283,7 @@ def main():
         df[tests] = df[tests].replace(0,pd.NA)
 
         df['occupancy'] = [round(x,2) for x in df['occupancy']]
+        df.columns = ['model','chain','res_num','res_type','alt_loc','mean_occ']+tests
 
         df.to_csv('multiconf_refinement_check_output.csv',header=True,index=False)
 

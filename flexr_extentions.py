@@ -583,6 +583,18 @@ def add_multiconfvalidation_gui():
             #coot.turn_off_backup(imol)
         return imol,name
 
+    #Coloring options
+    def get_color_by_alts():
+        at = color_by_alts.get_active()
+        n = bool(at)
+        return n
+
+    def get_color_by_validation():
+        at = color_by_flex_check.get_active()
+        n = bool(at)
+        return n
+
+
     def apply_cb(*args):
         imol,mol = get_molecule()
         run_validation(imol,mol)
@@ -598,9 +610,17 @@ def add_multiconfvalidation_gui():
         scrolled.set_vexpand(True)
         load_csv_into_treeview(treeview, './validation/multiconf_refinement_check_output.csv')
         vbox.append(scrolled)
-        #
+        # coloring
+
+        color1 = get_color_by_alts()
+        color2 = get_color_by_validation()
+        if color1 and not color2:
+            setup_colors()
+        if color2 and not color1:
+            color_by_validation()
 
         treeview.connect("row-activated", coot_view_csv_row)
+
 
     def remove_lonely_Hs(*args):
         imol,mol = get_molecule()
@@ -647,6 +667,233 @@ def add_multiconfvalidation_gui():
         print("Mismatched occupancies reset.")
         print("Done.")
 
+    # Coloring Options
+    # Option 1. Color by alts #
+    def setup_colors(*args):
+
+        imol,mol = get_molecule()
+
+        # Step 0:
+        ## preserves only carbon coloring
+        #coot.set_colour_map_rotation_on_read_pdb_c_only_flag(1)
+        ## color only carbon atoms
+        #coot.set_bond_colour_rotation_for_molecule(imol, 100)
+
+        # Step 1: Define colors (RGB values 0.0-1.0)
+
+        ## blues
+        #darkest_blue = [0.04, 0.13, 0.21]
+        #dark_blue = [0.07, 0.26, 0.43]
+        #python_blue = [0.22, 0.46, 0.67]
+        #mid_blue = [0.13, 0.45, 0.74]
+        #light_blue = [0.42, 0.67, 0.90]
+        #lightest_blue = [0.68, 0.82, 0.95]
+
+        ## greens
+        #lime_green = [0.0, 1.0, 0.0]
+        #forest_green = [0.13, 0.55, 0.13]
+        #sea_green = [0.18, 0.55, 0.34]
+        #olive_green = [0.5, 0.5, 0.0]
+        #pale_green = [0.6, 0.98, 0.6]
+
+        # colors less often used
+        hotpink = [1.0,0.4,0.5]
+        forest = [0.1,0.5,0.1]
+        olive = [0.5,0.5,0.0]
+        maroon = [0.5,0.0,0.0]
+        marine = [0.1,0.5,0.8]
+
+
+        # default atoms
+        red = [1.0,0.0,0.0]
+        python_blue = [0.22, 0.46, 0.67]
+        yellow = [1.0, 1.0, 0.0]
+
+        # Step 2: Set color palette, must start at 60->
+        coot.clear_user_defined_atom_colours(imol)
+        reps = coot.get_bonds_representation(0)
+        #for i in range(len(reps)):
+        for i in range(1000):
+            coot.remove_molecular_representation(0,i)
+
+
+        coot.add_molecular_representation_py(imol,'//A/*','','Bonds')
+        coot.set_user_defined_colours_py([
+            (60, hotpink),
+            (61, forest),
+            (62, olive),
+            (63, maroon),
+            (64, marine),
+            (65, red),
+            (66, python_blue),
+            (67, yellow)
+        ])
+
+        # need to filter out waters, and probably figure out specific alts (A,B,C) per residue
+        alts = coot_utils.residues_with_alt_confs(imol)
+
+        alt_ids = ['A','B','C','D','E']
+        color_codes = [60,61,62,63,64]
+
+        # Step 3: Assign colors to selections (MMDB format) - https://github.com/pemsley/coot/blob/main/mmdb-selection-doc
+        color_assignments = []
+
+
+        for null,chain,resnum,inscode in alts[:]:
+            atom_info = coot.residue_info_py(imol,chain,resnum,'')
+            alts = []
+            atoms = []
+            for atom in atom_info:
+                alt = atom[0][1]
+                alts.append(alt)
+                atomn = atom[0][0].strip()
+                if 'H' not in atomn:
+                    if 'C' in atomn:
+                        atoms.append(atomn)
+
+            alts = list(set(alts))
+            alts = [x for x in alts if x!='']
+
+            for altn in range(len(alts)):
+                for atomn in atoms:
+                    #for atom in side_chain_atom_list:
+                    if 'C' in atomn:
+                        mmdb = "//"+chain+"/"+str(resnum)+"/"+atomn+":"+alts[altn]
+                        color_assignments.append((mmdb,color_codes[altn]))
+                    #if 'N' in atomn:
+                    #    mmdb = "//"+chain+"/"+str(resnum)+"/"+atomn+":"+alts[altn]
+                    #    color_assignments.append((mmdb,66))
+                    #if 'O' in atomn:
+                    #    mmdb = "//"+chain+"/"+str(resnum)+"/"+atomn+":"+alts[altn]
+                    #    color_assignments.append((mmdb,65))
+
+
+        # all N to blue
+        n_atoms = ['N', 'ND2', 'ND1', 'NE2', 'NE', 'NH1', 'NH2', 'NE1', 'NZ']
+        n_atoms = n_atoms + ["N"+str(x) for x in np.arange(0,30,1)]
+        for n in n_atoms:
+            mmdb = "//*/*/"+n+":*"
+            color_assignments.append((mmdb,66))
+        # all O to red
+        o_atoms = ['O', 'OG1', 'OD1', 'OD2', 'OG', 'OH', 'OE1', 'OE2']
+        o_atoms = o_atoms + ["O"+str(x) for x in np.arange(0,30,1)]
+        for o in o_atoms:
+            mmdb = "//*/*/"+o+":*"
+            color_assignments.append((mmdb,65))
+        # all O to red
+        s_atoms = ['SD', 'SG']
+        s_atoms = s_atoms + ["S"+str(x) for x in np.arange(0,30,1)]
+        for s in s_atoms:
+            mmdb = "//*/*/"+s+":*"
+            color_assignments.append((mmdb,67))
+
+        #remove duplicates
+        color_assignments = list(set(color_assignments))[:]
+        #print(color_assignments)
+
+
+        #color_assignments = color_assignments[:1]
+        #sel = [x for (x,y) in color_assignments][0]
+        #print(sel)
+        #feature_imol = coot.new_molecule_by_atom_selection(imol, sel)
+
+        coot.set_user_defined_atom_colour_by_selection_py(imol, color_assignments)
+        #coot.set_user_defined_atom_colour_py(imol, color_assignments)
+
+        # Step 4: Create representation
+
+        for i in color_assignments:
+            #print(i)
+            sel = i[0]
+            color = i[1]
+            coot.add_molecular_representation_py(
+                imol,
+                sel,
+                "userDefined",  # Use user-defined colors
+                "Bonds"
+            )
+
+        coot.set_bond_thickness(imol, 4)
+
+        return "colored by alt IDs"
+
+    # Option 3. Color by error via flex-check
+    def color_by_validation(*args):
+
+        validation = pd.read_csv('./validation/multiconf_refinement_check_output.csv',header=0)
+
+        imol,mol = get_molecule()
+
+        # Step 2: Set color palette, must start at 60->
+        coot.clear_user_defined_atom_colours(imol)
+        reps = coot.get_bonds_representation(0)
+        for i in range(len(reps)):
+            coot.remove_molecular_representation(0,i)
+
+        red = [1.0,0.0,0.0]
+        purple = [0.5, 0.0, 0.5]
+        python_blue = [0.22, 0.46, 0.67]
+        yellow = [1.0, 1.0, 0.0]
+
+        coot.set_user_defined_colours_py([
+            (65, red),
+            (66, python_blue),
+            (67, yellow),
+            (68, purple)
+        ])
+
+        color_assignments = []
+
+        for i in range(len(validation)):
+            res = validation.iloc[i,:]
+            chain = res.chain
+            resnum = res.res_num
+            alt_loc = res.alt_loc
+
+            mmdb = "//"+chain+"/"+str(resnum)+"/*:"+alt_loc
+            color_assignments.append((mmdb,68))
+
+            # all N to blue
+            n_atoms = ['N', 'ND2', 'ND1', 'NE2', 'NE', 'NH1', 'NH2', 'NE1', 'NZ']
+            n_atoms = n_atoms + ["N"+str(x) for x in np.arange(0,30,1)]
+            for n in n_atoms:
+                mmdb = "//*/*/"+n+":*"
+                color_assignments.append((mmdb,66))
+            # all O to red
+            o_atoms = ['O', 'OG1', 'OD1', 'OD2', 'OG', 'OH', 'OE1', 'OE2']
+            o_atoms = o_atoms + ["O"+str(x) for x in np.arange(0,30,1)]
+            for o in o_atoms:
+                mmdb = "//*/*/"+o+":*"
+                color_assignments.append((mmdb,65))
+            # all O to red
+            s_atoms = ['SD', 'SG']
+            s_atoms = s_atoms + ["S"+str(x) for x in np.arange(0,30,1)]
+            for s in s_atoms:
+                mmdb = "//*/*/"+s+":*"
+                color_assignments.append((mmdb,67))
+
+        #remove duplicates
+        color_assignments = list(set(color_assignments))
+
+        coot.set_user_defined_atom_colour_by_selection_py(imol, color_assignments)
+        #coot.set_user_defined_atom_colour_py(imol, color_assignments)
+
+        # Step 4: Create representation
+
+        for i in color_assignments:
+            #print(i)
+            sel = i[0]
+            color = i[1]
+            coot.add_molecular_representation_py(
+                imol,
+                sel,
+                "userDefined",  # Use user-defined colors
+                "Bonds"
+            )
+
+        coot.set_bond_thickness(imol, 4)
+
+        return 'colored by flex-check flags'
 
     # design GUI
 
@@ -707,6 +954,37 @@ def add_multiconfvalidation_gui():
     print("debug:: add_multiconfvalidation_gui(): combobox_molecule:",  combobox_molecule)
 
     combobox_molecule.set_active(0)
+
+    # Create places for drop down option
+    # coordination number combobox
+    number_text4 = Gtk.Label(label="Color side-chains by Alt ID:")
+    hbox_chooser4 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+    hbox_chooser4.set_margin_start(6)
+    hbox_chooser4.set_margin_bottom(4)
+    hbox_chooser4.set_margin_top(4)
+    color_by_alts_local = Gtk.CheckButton(label = "")
+    color_by_alts = color_by_alts_local
+    color_by_alts.set_active(False)
+
+    vbox.append(hbox_chooser4)
+    hbox_chooser4.append(number_text4)
+    hbox_chooser4.append(color_by_alts_local)
+
+
+    #
+    number_text5 = Gtk.Label(label="Color side-chains by FLEX-check flag:")
+    hbox_chooser5 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+    hbox_chooser5.set_margin_start(6)
+    hbox_chooser5.set_margin_bottom(4)
+    hbox_chooser5.set_margin_top(4)
+
+    color_by_flex_check_local = Gtk.CheckButton(label = "")
+    color_by_flex_check = color_by_flex_check_local
+    color_by_flex_check.set_active(False)
+
+    vbox.append(hbox_chooser5)
+    hbox_chooser5.append(number_text5)
+    hbox_chooser5.append(color_by_flex_check_local)
 
 
     results_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -964,6 +1242,18 @@ def add_switch_alts_button(*args):
             #print(atom,alt)
             #print(alt.strip('z'))
             coot.set_atom_string_attribute(imol,chain,resn,ins_code,atom,alt,'alt-conf',alt.strip('z'))
+
+        #coloring options
+        def get_filter_ops():
+            if color_by_alts.get_active():
+                color_by_alts_choice = True
+            else:
+                clashfilter = False
+            if color_by_flexcheck.get_active():
+                color_by_flexcheck_choice = True
+            else:
+                color_by_flexcheck_choice = False
+            return color_by_alts_choice,color_by_flexcheck_choice
 
     ### DESIGN GUI ###
 
