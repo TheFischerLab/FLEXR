@@ -155,13 +155,13 @@ tmp                             7. Directory with Ringer CSVs separated by chain
 
 Reference: TBD
 
-1. The most useful way to access `FLEXR-check` is through the Coot 1 GUI (see below).
+1. The most useful way to access `FLEXR-check` is through the Coot 1 GUI (see below Fig A and B).
 `FLEXR-check` can also be run through the command line as a standalone script.
 ```
 python FLEXR/src/tools/flex-check.py somepdb.pdb
 ```
 where outputs are generated in `./validation/multiconformer_refinement_check_output.csv`.
-The `CSV` file contains a list of residues flagged by each test.
+The `CSV` file contains a list of residues flagged by each test (Fig C).
 
 ![flex-check](img/flex-check.png)
 
@@ -171,8 +171,8 @@ Tools:
 Reset Occupancies            1. Resets mismatched occupancies - a residue with two alts will then each have occupancies of 0.5
 Switch Alts/SWITCHER         2. Allows users to change alt IDs and occupancies across an entire residue at once.
 Color:
-Side-chains by alt
-side-chains by FLEX-check flag
+Side-chains by alt (Fig D)
+side-chains by FLEX-check flag (Fig E)
 ```
 
 
