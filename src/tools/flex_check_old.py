@@ -6,8 +6,6 @@ Created on Mon Jun  2 12:22:24 2025
 @author: Tim Stachowski, PhD
 Fischer Laboratory
 St. Jude Children's Research Hospital
-
-Version 1.4 - Prot Sci Revision 09/18/2026
 """
 
 
@@ -49,16 +47,16 @@ def get_atom_info(file):
                         pdb_info.append((file,atom_het,atom_num,atom_type,alt_loc,occ,residue_name,chain,res_seq,x,y,z,b_fac))
     pdb_info = pd.DataFrame(pdb_info,columns = ['model','atom_het','atom_num','atom_type','alt_loc','occupancy','res_type','chain','res_num','x','y','z','b_factor'])
     pdb_info = pdb_info[['model','chain','res_num','res_type','alt_loc','atom_type','occupancy','x','y','z','b_factor','atom_het']]
-
     return pdb_info
 
-tests = ["1. Occ<0.1","2. MismatchedOcc","3. SumOcc!=1","4. Lonely Labels","5. Wrong Highest Alt ID","6. Wrong # of Alt IDs"]
+tests = ["1. Occ<0.1","2. MismatchedOcc","3. Lonely_Hs","4. SumOcc!=1","5. Wrong Highest Alt ID","6. Wrong # of Alt IDs"]
 
 def minimum_occupancy(df):
     # lowest occupancy in PDB
-    residues = df
-    #consider alts or any side-chain?
+    #minocc = df[df['atom_het']=='ATOM']['occupancy'].min()
+    residues = df[df['atom_het']=='ATOM']
     residues = residues[residues['alt_loc']!=' ']
+    residues = residues[~(residues['atom_type'].str.contains('H'))]
 
     residues = residues.groupby(by=['chain','res_num','alt_loc'])['occupancy'].min().reset_index()
     lowestocc = residues.nsmallest(1,'occupancy')
@@ -68,10 +66,9 @@ def minimum_occupancy(df):
 
 def low_occupancy(df):
     # residues < 0.1 occ
-    residues = df
-
-    #consider alts or any side-chain?
-    #residues = residues[residues['alt_loc']!=' ']
+    residues = df[df['atom_het']=='ATOM']
+    residues = residues[residues['alt_loc']!=' ']
+    residues = residues[~(residues['atom_type'].str.contains('H'))]
 
     residues = residues.groupby(by=['chain','res_num','alt_loc'])['occupancy'].min().reset_index()
     lessthanten = residues[residues['occupancy']<0.1]
@@ -92,10 +89,13 @@ def low_occupancy(df):
 
 def mismatched_occupancies(df):
     # rotamers where the atomic occupancies are not the same
-    mismatches = df
+    mismatches = df[df['atom_het']=='ATOM']
 
     # consider alts or any side-chain?
     #mismatches = mismatches[mismatches['alt_loc']!=' ']
+
+    # consider all atoms or non-h atoms?
+    #mismatches = mismatches[~(mismatches['atom_type'].str.contains('H'))]
 
     mismatches = mismatches.groupby(by=['chain','res_num','alt_loc']).occupancy.nunique().eq(1).reset_index()
     mismatches = mismatches[mismatches['occupancy']==False]
@@ -114,33 +114,69 @@ def mismatched_occupancies(df):
         df = pd.merge(df,mismatches,on=['chain','res_num'],how='left')
     return df
 
+def lonely_hydrogens(df):
+    # if hydrogens do not have any accompanying side-chain
+    residues = df[df['atom_het']=='ATOM']
+
+    residues = pd.pivot_table(residues,index=['chain','res_num','alt_loc'],values='atom_type',aggfunc=list).reset_index()
+    alts = residues[residues['alt_loc']!=' ']
+    alts['atom_type'] = alts['atom_type'].astype(str)
+
+    hydrogens=["['HA']","['HB1']","['HB2']","['HB3']","['H']","['HG']","['HG2']",\
+    "['HG3']","['HE21']","['HE22']","['HD2']","['HD3']","['HB']","['HG11']",\
+    "['HG12']","['HG13']","['HG21']","['HG22']","['HG23']","['HG1']","['HE2']",\
+    "['HE3']","['HZ1']","['HZ2']","['HZ3']","['HD11']","['HD12']","['HD13']","['HD21']",\
+    "['HD22']","['HD23']","['HE']","['HH11']","['HH12']","['HH21']","['HH22']","['HD1']",\
+    "['HE1']","['HZ']","['HA2']","['HA3']","['HH']","['HH1']","['HH2']"]
+
+    #lonelies = alts[alts['atom_type']=="['H']"]
+    lonelies = alts[alts['atom_type'].isin(hydrogens)]
+    print('4. Hydrogens without side-chains: ')
+    if len(lonelies)>0:
+        print(lonelies)
+        print('')
+        lonelies[tests[2]] = 'X'
+        lonelies = lonelies[['chain','res_num','alt_loc']+[tests[2]]]
+        lonelies = lonelies.drop_duplicates()
+        df = pd.merge(df,lonelies,on=['chain','res_num','alt_loc'],how='left')
+    else:
+        print(None)
+        print('')
+        lonelies[tests[2]] = ''
+        lonelies = lonelies[['chain','res_num']+[tests[2]]]
+        lonelies = lonelies.drop_duplicates()
+        df = pd.merge(df,lonelies,on=['chain','res_num'],how='left')
+    return df
+
+
 def occupancies_sum(df):
     # occupancies do not equal 1.0
-
-    #consider alts or any side-chain?
     totals = df[df['alt_loc']!=' ']
+    totals = totals[totals['atom_het']=='ATOM']
+    totals = totals[~(totals['atom_type'].str.contains('H'))]
 
     totals = totals.groupby(by=['chain','res_num','alt_loc']).occupancy.mean().reset_index()
     totals = totals.groupby(by=['chain','res_num']).occupancy.sum().round(1).eq(1).reset_index()
     totals = totals[totals['occupancy']==False]
-    print('4. Total occupancy across rotamers != 1.0: ')
+    print('5. Total occupancy across rotamers != 1.0: ')
     if len(totals)>0:
         print(totals.to_string(index=False))
         print('')
-        totals[tests[2]] = 'X'
-        totals = totals[['chain','res_num']+[tests[2]]]
+        totals[tests[3]] = 'X'
+        totals = totals[['chain','res_num']+[tests[3]]]
         df = pd.merge(df,totals,on=['chain','res_num'],how='left')
     else:
         print(None)
         print('')
-        totals[tests[2]] = ''
-        totals = totals[['chain','res_num']+[tests[2]]]
+        totals[tests[3]] = ''
+        totals = totals[['chain','res_num']+[tests[3]]]
         df = pd.merge(df,totals,on=['chain','res_num'],how='left')
     return df
 
 def wrong_occupancy_alt(df):
     # if A isn't highest occupancy residue
-    highest = df
+    highest = df[df['atom_het']=='ATOM']
+    highest = highest[~(highest['atom_type'].str.contains('H'))]
     highest = highest.groupby(by=['chain','res_num','alt_loc']).occupancy.mean().reset_index()
     highest = highest[highest['alt_loc']!= ' ']
     maxocc = highest.groupby(by=['chain','res_num']).occupancy.max().reset_index()
@@ -171,8 +207,10 @@ def wrong_occupancy_alt(df):
     return df
 
 def number_of_locids(df):
-    # check correct order of labels
-    residues = df
+    # check correct number of labels
+    residues = df[df['atom_het']=='ATOM']
+    residues = residues[~(residues['atom_type'].str.contains('H'))]
+
     residues = residues[['chain','res_num','alt_loc']].drop_duplicates()
     residues = residues[residues['alt_loc']!=' ']
     residues['convert'] = [ord(x)-64 for x in residues['alt_loc']]
@@ -196,35 +234,6 @@ def number_of_locids(df):
         df = pd.merge(df,combine,on=['chain','res_num'],how='left')
     return df
 
-def lonely_labels(df):
-    # if residue only has one alt label
-    residues = df
-
-    #consider alts or any side-chain?
-    residues = residues[residues['alt_loc']!=' ']
-
-    residues = residues[['chain','res_num','alt_loc']].drop_duplicates()
-    residues = residues[['chain','res_num']]
-    counts = residues.value_counts().reset_index()
-    counts = counts[counts['count']==1]
-    counts.columns = ['chain','res_num',tests[3]]
-    print('5. Lonely alt_loc IDs (single conf. side-chains with labels)')
-    if len(counts)>0:
-        print(counts.to_string(index=False))
-        print('')
-        counts[tests[3]] = 'X'
-        df = pd.merge(df,counts,on=['chain','res_num'],how='left')
-    else:
-        print(None)
-        print('')
-        counts[tests[3]] = ''
-        df = pd.merge(df,counts,on=['chain','res_num'],how='left')
-    return df
-
-
-
-
-
 #################
 
 def main():
@@ -238,21 +247,15 @@ def main():
 
     df = get_atom_info(pdb)
 
-    ## OPTIONS ##
-    # 1. only interested in side-chains, no backbone
+    # only interested in side-chains
     backboneatoms = ['N', 'CA', 'C', 'O']
-    # for paper:
-    # 2.
-    df = df[~(df['atom_type'].isin(backboneatoms))]
-    df = df[~((df['res_type']=='GLY')|(df['res_type']=='ALA'))]
-    # 3. ignore hetatms
-    df = df[df['atom_het']=='ATOM']
-    # 4. ignore hydrogens
-    df = df[~(df['atom_type'].str.contains('H'))]
-    # 5. only protein amino acid side-chains, can comment this out to test nucleic acid
-    amino_acids_three_letter = ["Arg", "Asn", "Asp", "Cys", "Gln", "Glu", "His", "Ile", "Leu", "Lys", "Met", "Phe", "Pro", "Ser", "Thr", "Trp", "Tyr", "Val"]
-    amino_acids_three_letter = [x.upper() for x in amino_acids_three_letter]
-    df = df[df['res_type'].isin(amino_acids_three_letter)]
+    #for paper:
+    #df = df[~(df['atom_type'].isin(backboneatoms))]
+    #
+    df = df[~(df['atom_type'].isin(backboneatoms))|(df['res_type']=='GLY')|(df['res_type']=='ALA')]
+
+
+    #print(df)
 
     if (df['alt_loc']!=' ').any():
 
@@ -260,11 +263,10 @@ def main():
         minimum_occupancy(df)
         df = low_occupancy(df)
         df = mismatched_occupancies(df)
+        df = lonely_hydrogens(df)
         df = occupancies_sum(df)
-        df = lonely_labels(df)
         df = wrong_occupancy_alt(df)
         df = number_of_locids(df)
-
 
         ## export ##
         # only output residues with errors

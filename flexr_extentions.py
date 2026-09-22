@@ -15,6 +15,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 #---------------------------------------------------------------------
 #  FLEXR interface
+#  v.1.2.3 - removed H button
 #---------------------------------------------------------------------
 
 def add_module_flexr():
@@ -621,22 +622,6 @@ def add_multiconfvalidation_gui():
 
         treeview.connect("row-activated", coot_view_csv_row)
 
-
-    def remove_lonely_Hs(*args):
-        imol,mol = get_molecule()
-        with open('./validation/multiconf_refinement_check_output.csv', newline='') as csvfile:
-            reader = csv.reader(csvfile)
-            rows = [row for row in reader]
-        alts = ['A','B','C','D','E','F']
-        for row in rows[1:]:
-            if 'X' in row[8]:
-                for alt in alts:
-                    print('baddie!')
-                    coot.delete_atom(imol,row[1],int(row[2]),'',' H  ',alt)
-
-        print("Lonely Hydrogens Removed.")
-        print("Done.")
-
     def match_occupancies(*args):
         imol,mol = get_molecule()
         with open('./validation/multiconf_refinement_check_output.csv', newline='') as csvfile:
@@ -1000,7 +985,6 @@ def add_multiconfvalidation_gui():
     ## Place exit/run buttons
     apply_button = Gtk.Button(label="  Run  ")
     close_button = Gtk.Button(label="  Close  ")
-    clean_h_button = Gtk.Button(label="  Clean Hs  ")
     match_occs_button = Gtk.Button(label="  Reset Occ  ")
     switch_alts_button = Gtk.Button(label="  Switch Alts  ")
 
@@ -1021,11 +1005,6 @@ def add_multiconfvalidation_gui():
     close_button.set_margin_top(4)
     close_button.set_margin_bottom(4)
 
-    clean_h_button.set_margin_start(2)
-    clean_h_button.set_margin_end(2)
-    clean_h_button.set_margin_top(4)
-    clean_h_button.set_margin_bottom(4)
-
     match_occs_button.set_margin_start(2)
     match_occs_button.set_margin_end(2)
     match_occs_button.set_margin_top(4)
@@ -1044,8 +1023,6 @@ def add_multiconfvalidation_gui():
     hbox_buttons.append(close_button)
     hbox_buttons.append(apply_button)
 
-
-    hbox_buttons2.append(clean_h_button)
     hbox_buttons2.append(match_occs_button)
     hbox_buttons2.append(switch_alts_button)
 
@@ -1070,7 +1047,7 @@ def add_multiconfvalidation_gui():
         #open('./validation/multiconf_refinement_check_output.csv', 'a').close()
         os.mkdir('validation')
         with open('./validation/multiconf_refinement_check_output.csv','w+') as f:
-            f.write('model,chain,res_num,res_type,alt_loc,occupancy,1. Occ<0.1,2. MismatchedOcc,3. Lonely_Hs,4. SumOcc!=1,5. Wrong Highest Alt ID,6. Wrong # of Alt IDs')
+            f.write('model,chain,res_num,res_type,alt_loc,occupancy,1. Occ<0.1,2. MismatchedOcc,3. SumOcc!=1,4. Lonely Labels,5. Wrong Highest Alt ID,6. Wrong # of Alt IDs')
         f.close()
 
 #    if os.path.exists('./validation/multiconf_refinement_check_output.csv'):
@@ -1081,13 +1058,11 @@ def add_multiconfvalidation_gui():
         #open('./validation/multiconf_refinement_check_output.csv', 'a').close()
         #os.mkdir('validation')
         with open('./validation/multiconf_refinement_check_output.csv','w+') as f:
-            f.write('model,chain,res_num,res_type,alt_loc,occupancy,1. Occ<0.1,2. MismatchedOcc,3. Lonely_Hs,4. SumOcc!=1,5. Wrong Highest Alt ID,6. Wrong # of Alt IDs')
+            f.write('model,chain,res_num,res_type,alt_loc,occupancy,1. Occ<0.1,2. MismatchedOcc,3. SumOcc!=1,4. Lonely Labels,5. Wrong Highest Alt ID,6. Wrong # of Alt IDs')
         f.close()
 
     vbox.append(scrolled)
     apply_button.connect("clicked", apply_cb,vbox)
-
-    clean_h_button.connect("clicked", remove_lonely_Hs)
     match_occs_button.connect("clicked", match_occupancies)
     switch_alts_button.connect("clicked", add_switch_alts_button)
 
