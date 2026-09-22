@@ -155,7 +155,7 @@ tmp                             7. Directory with Ringer CSVs separated by chain
 
 Reference: TBD
 
-1. The most useful way to access `FLEXR-check` is through the Coot 1 GUI.
+1. The most useful way to access `FLEXR-check` is through the Coot 1 GUI (see below).
 `FLEXR-check` can also be run through the command line as a standalone script.
 ```
 python FLEXR/src/tools/flex-check.py somepdb.pdb
@@ -163,11 +163,16 @@ python FLEXR/src/tools/flex-check.py somepdb.pdb
 where outputs are generated in `./validation/multiconformer_refinement_check_output.csv`.
 The `CSV` file contains a list of residues flagged by each test.
 
-2. The GUI contains three additional tools
+![flex-check](img/flex-check.png)
+
+2. The GUI contains two additional tools and two coloring options:
 ```
-CleanHs                      1. Removes "Lonely" hydrogens - hydrogens with alt IDs assigned to residues without alt IDs
-Reset Occupancies            2. Resets mismatched occupancies - a residue with two alts will then each have occupancies of 0.5
-Switch Alts/SWITCHER         3. Allows users to change alt IDs and occupancies across an entire residue at once.
+Tools:
+Reset Occupancies            1. Resets mismatched occupancies - a residue with two alts will then each have occupancies of 0.5
+Switch Alts/SWITCHER         2. Allows users to change alt IDs and occupancies across an entire residue at once.
+Color:
+Side-chains by alt
+side-chains by FLEX-check flag
 ```
 
 
