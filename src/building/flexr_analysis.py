@@ -31,8 +31,8 @@ def output_summaries(altsfile,imol,flexrmolnum):
     flex = coot_utils.residues_with_alt_confs(flexrmolnum)
 
     #format
-    og = [x[1] + str(x[2]) for x in og]
-    flex = [x[1] + str(x[2]) for x in flex]
+    og = [str(x[1]) + str(x[2]) for x in og]
+    flex = [str(x[1]) + str(x[2]) for x in flex]
 
     # sets
     og = [str(x) for x in og]
